@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>Library</OutputType>
+    <RootNamespace>AndreasBehrend.NINA.Phd2Api</RootNamespace>
+    <AssemblyName>AndreasBehrend.NINA.Phd2Api</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Phd2ApiDockables\**" />
+    <Compile Remove="Phd2ApiDrivers\**" />
+    <Compile Remove="Phd2ApiSequenceItems\**" />
+    <EmbeddedResource Remove="Phd2ApiDockables\**" />
+    <EmbeddedResource Remove="Phd2ApiDrivers\**" />
+    <EmbeddedResource Remove="Phd2ApiSequenceItems\**" />
+    <None Remove="Phd2ApiDockables\**" />
+    <None Remove="Phd2ApiDrivers\**" />
+    <None Remove="Phd2ApiSequenceItems\**" />
+    <Page Remove="Phd2ApiDockables\**" />
+    <Page Remove="Phd2ApiDrivers\**" />
+    <Page Remove="Phd2ApiSequenceItems\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NINA.Plugin" Version="3.0.0.2017-beta" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.Settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.Settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <PropertyGroup />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="&#xD;&#xA;if not exist &quot;%25localappdata%25\NINA\Plugins\3.0.0&quot; (&#xD;&#xA;  echo &quot;Creating $(PlatformName) Plugins folder&quot;&#xD;&#xA;  mkdir &quot;%25localappdata%25\NINA\Plugins\3.0.0&quot;&#xD;&#xA;)&#xD;&#xA;if not exist &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot; (&#xD;&#xA;  echo &quot;Creating $(PlatformName) Plugins $(TargetName) folder&quot;&#xD;&#xA;  mkdir &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;echo &quot;Copying $(PlatformName) $(TargetFileName)&quot;&#xD;&#xA;xcopy &quot;$(TargetPath)&quot; &quot;%25localappdata%25\NINA\Plugins\3.0.0\$(TargetName)&quot; /h/i/c/k/e/r/y&#xD;&#xA;  " />
+  </Target>
+</Project>

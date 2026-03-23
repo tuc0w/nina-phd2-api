@@ -1,0 +1,70 @@
+﻿<ResourceDictionary
+    x:Class="AndreasBehrend.NINA.Phd2Api.Options"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <DataTemplate x:Key="PHD2 API_Options">
+        <StackPanel Orientation="Vertical" Margin="5">
+
+            <GroupBox Header="PHD2 Connection" Margin="0,0,0,8">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="PHD2 Host" Margin="0,4" />
+                    <TextBox Grid.Row="0" Grid.Column="1" MinWidth="120" Text="{Binding Phd2Host}" Margin="4,4" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="PHD2 Port" Margin="0,4" />
+                    <TextBox Grid.Row="1" Grid.Column="1" MinWidth="80" Text="{Binding Phd2Port}" Margin="4,4" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Status" Margin="0,4" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Text="{Binding Phd2ConnectionStatus}" Margin="4,4" FontWeight="SemiBold" />
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="API Server" Margin="0,0,0,8">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="API Port" Margin="0,4" />
+                    <TextBox Grid.Row="0" Grid.Column="1" MinWidth="80" Text="{Binding ApiPort}" Margin="4,4" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="REST Base URL" Margin="0,4" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="4,4">
+                        <Run Text="http://localhost:" /><Run Text="{Binding ApiPort, Mode=OneWay}" /><Run Text="/api/v1/phd2/" />
+                    </TextBlock>
+                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="WebSocket URL" Margin="0,4" />
+                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="4,4">
+                        <Run Text="ws://localhost:" /><Run Text="{Binding ApiPort, Mode=OneWay}" /><Run Text="/api/v1/events/" />
+                    </TextBlock>
+                </Grid>
+            </GroupBox>
+
+            <GroupBox Header="Current State">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="PHD2 App State" Margin="0,4" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Text="{Binding CurrentAppState}" Margin="4,4" FontWeight="SemiBold" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="WebSocket Clients" Margin="0,4" />
+                </Grid>
+            </GroupBox>
+
+        </StackPanel>
+    </DataTemplate>
+</ResourceDictionary>
