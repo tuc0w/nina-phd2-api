@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MIT")]
 // The url to the license
-[assembly: AssemblyMetadata("LicenseURL", "https://github.com/tuc0w/nina-phd2-api/LICENSE.txt")]
+[assembly: AssemblyMetadata("LicenseURL", "https://github.com/tuc0w/nina-phd2-api/blob/main/LICENSE.txt")]
 // The repository where your pluggin is hosted
 [assembly: AssemblyMetadata("Repository", "https://github.com/tuc0w/nina-phd2-api")]
 
@@ -42,7 +42,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyMetadata("Tags", "Web,PHD2,Api")]
 
 //[Optional] A link that will show a log of all changes in between your plugin's versions
-[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/tuc0w/nina-phd2-api/CHANGELOG.md")]
+[assembly: AssemblyMetadata("ChangelogURL", "https://github.com/tuc0w/nina-phd2-api/blob/main/CHANGELOG.md")]
 
 //[Optional] The url to a featured logo that will be displayed in the plugin list next to the name
 [assembly: AssemblyMetadata("FeaturedImageURL", "")]

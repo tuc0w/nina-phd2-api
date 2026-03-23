@@ -1,0 +1,67 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PLUGIN_NAME: "PHD2 API"
+  PLUGIN_DLL_NAME: "AndreasBehrend.NINA.Phd2Api"
+  PROJECT_FILE: "PHD2 API.csproj"
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get Assembly Version
+        id: get_version
+        run: |
+          $version = (Select-String -Path "Properties/AssemblyInfo.cs" `
+            -Pattern 'AssemblyVersion\("([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)"\)').Matches.Groups[1].Value
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Prepare package folder
+        run: New-Item -ItemType Directory -Force -Path "packages/${{ env.PLUGIN_DLL_NAME }}"
+
+      - name: Build
+        run: |
+          dotnet restore "${{ env.PROJECT_FILE }}"
+          dotnet build "${{ env.PROJECT_FILE }}" -c Release `
+            -p:PostBuildEvent= `
+            -p:Version=${{ steps.get_version.outputs.version }}
+
+      - name: Prepare package
+        run: |
+          Copy-Item "bin/Release/net8.0-windows/${{ env.PLUGIN_DLL_NAME }}.dll" `
+            "packages/${{ env.PLUGIN_DLL_NAME }}/" -Force
+          Copy-Item "bin/Release/net8.0-windows/${{ env.PLUGIN_DLL_NAME }}.pdb" `
+            "packages/${{ env.PLUGIN_DLL_NAME }}/" -Force
+
+      - name: Create archive and manifest
+        run: |
+          curl https://raw.githubusercontent.com/isbeorn/nina.plugin.manifests/refs/heads/main/tools/CreateNET7Manifest.ps1 `
+            -o CreateNET7Manifest.ps1
+          pwsh CreateNET7Manifest.ps1 `
+            -file "packages/${{ env.PLUGIN_DLL_NAME }}/${{ env.PLUGIN_DLL_NAME }}.dll" `
+            -installerUrl "https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.version }}/${{ env.PLUGIN_DLL_NAME }}.zip" `
+            -createArchive `
+            -includeAll
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          name: ${{ env.PLUGIN_NAME }} ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ env.PLUGIN_DLL_NAME }}.zip
+            manifest.json
