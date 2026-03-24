@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.WebSockets;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -95,6 +96,12 @@ namespace AndreasBehrend.NINA.Phd2Api.WebApi {
                 // Swagger UI
                 if (path == "/api/v1/swagger") {
                     await ServeTextAsync(ctx, SwaggerUi.GetHtml(_port), "text/html; charset=utf-8");
+                    return;
+                }
+
+                // Swagger UI static assets (embedded resources)
+                if (path.StartsWith("/api/v1/swagger-assets/")) {
+                    await ServeSwaggerAssetAsync(ctx, path);
                     return;
                 }
 
@@ -362,6 +369,28 @@ namespace AndreasBehrend.NINA.Phd2Api.WebApi {
                 Logger.Error($"PHD2 API: Error serving star image PNG: {ex.Message}");
                 try { ctx.Response.StatusCode = 500; ctx.Response.Close(); } catch { }
             }
+        }
+
+        private static async Task ServeSwaggerAssetAsync(HttpListenerContext ctx, string path) {
+            var fileName = Path.GetFileName(path);
+            var resourceName = $"AndreasBehrend.NINA.Phd2Api.WebApi.SwaggerAssets.{fileName}";
+            var contentType = fileName.EndsWith(".css") ? "text/css; charset=utf-8" : "application/javascript; charset=utf-8";
+
+            using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+            if (stream == null) {
+                ctx.Response.StatusCode = 404;
+                ctx.Response.Close();
+                return;
+            }
+
+            var bytes = new byte[stream.Length];
+            await stream.ReadExactlyAsync(bytes);
+            ctx.Response.ContentType = contentType;
+            ctx.Response.ContentLength64 = bytes.Length;
+            ctx.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            ctx.Response.Headers.Add("Cache-Control", "public, max-age=86400");
+            await ctx.Response.OutputStream.WriteAsync(bytes);
+            ctx.Response.Close();
         }
 
         private static async Task ServeTextAsync(HttpListenerContext ctx, string content, string contentType) {

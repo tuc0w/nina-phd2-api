@@ -65,6 +65,23 @@
                 </Grid>
             </GroupBox>
 
+            <Button Margin="0,8,0,0"
+                    HorizontalAlignment="Right"
+                    MinWidth="150"
+                    Padding="12,4"
+                    Command="{Binding RestartCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Content" Value="Apply &amp; Restart" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRestarting}" Value="True">
+                                <Setter Property="Content" Value="Restarting…" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
         </StackPanel>
     </DataTemplate>
 </ResourceDictionary>

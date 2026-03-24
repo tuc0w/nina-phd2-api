@@ -7,8 +7,8 @@ using System.Runtime.InteropServices;
 
 // [MANDATORY] The assembly versioning
 //Should be incremented for each new release build of a plugin
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.1.1")]
+[assembly: AssemblyFileVersion("1.0.1.1")]
 
 // [MANDATORY] The name of your plugin
 [assembly: AssemblyTitle("PHD2 API")]
@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2026 Andreas Behrend")]
 
 // The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.2017")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "3.0.0.0")]
 
 // The license your plugin code is using
 [assembly: AssemblyMetadata("License", "MIT")]
@@ -51,7 +51,20 @@ using System.Runtime.InteropServices;
 //[Optional] An additional url to an example example screenshot of your plugin in action
 [assembly: AssemblyMetadata("AltScreenshotURL", "")]
 //[Optional] An in-depth description of your plugin
-[assembly: AssemblyMetadata("LongDescription", @"An API to interact with PHD2.")]
+[assembly: AssemblyMetadata("LongDescription", @"Exposes PHD2 as a local REST API and real-time WebSocket server, accessible from any HTTP client on the network - no additional software required.
+
+REST API: http://localhost:{ApiPort}/api/v1/phd2/
+WebSocket: ws://localhost:{ApiPort}/api/v1/events/
+Swagger UI: http://localhost:{ApiPort}/api/v1/swagger
+
+Features:
+- Query PHD2 state: app state, version, calibration status, lock position, pixel scale, exposure, guide output and more
+- Control guiding: start/stop guiding, dither, pause, loop exposures, find star, manual guide pulse
+- Manage equipment: connect/disconnect, switch profiles, flip or clear calibration data
+- Live guide star image as JSON/base64 or directly as PNG
+- Real-time WebSocket events for every PHD2 state change (GuideStep, StarLost, SettleDone, AppState, Calibrating, Alert and more)
+- Swagger UI with interactive API documentation bundled offline — no internet connection needed
+- Plugin settings can be applied at runtime via the 'Apply & Restart' button without restarting N.I.N.A.")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from

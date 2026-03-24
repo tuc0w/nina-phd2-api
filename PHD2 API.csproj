@@ -24,6 +24,14 @@
     <Page Remove="Phd2ApiSequenceItems\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\workflows\release.yml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="WebApi\SwaggerAssets\swagger-ui.css" />
+    <EmbeddedResource Include="WebApi\SwaggerAssets\swagger-ui-bundle.js" />
+    <EmbeddedResource Include="WebApi\SwaggerAssets\swagger-ui-standalone-preset.js" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="NINA.Plugin" Version="3.0.0.2017-beta" />
   </ItemGroup>
   <ItemGroup>

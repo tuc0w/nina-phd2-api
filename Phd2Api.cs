@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Settings = AndreasBehrend.NINA.Phd2Api.Properties.Settings;
 
 namespace AndreasBehrend.NINA.Phd2Api {
@@ -29,6 +30,9 @@ namespace AndreasBehrend.NINA.Phd2Api {
         private readonly WebSocketHandler _wsHandler;
         private readonly HttpServer _httpServer;
         private CancellationTokenSource _reconnectCts;
+        private bool _isRestarting;
+
+        public ICommand RestartCommand { get; }
 
         [ImportingConstructor]
         public Phd2Api(IProfileService profileService) {
@@ -48,6 +52,8 @@ namespace AndreasBehrend.NINA.Phd2Api {
             _phd2Client.EventReceived += OnPhd2EventReceived;
             _phd2Client.Phd2Connected += OnPhd2Connected;
             _phd2Client.Phd2Disconnected += OnPhd2Disconnected;
+
+            RestartCommand = new RelayCommand(_ => RestartAsync(), _ => !IsRestarting);
 
             StartApiServer();
             _ = ConnectToPhd2WithRetryAsync();
@@ -113,6 +119,29 @@ namespace AndreasBehrend.NINA.Phd2Api {
                 case "CalibrationFailed":
                     RaisePropertyChanged(nameof(CurrentAppState));
                     break;
+            }
+        }
+
+        public bool IsRestarting {
+            get => _isRestarting;
+            private set {
+                _isRestarting = value;
+                RaisePropertyChanged();
+                (RestartCommand as RelayCommand)?.RaiseCanExecuteChanged();
+            }
+        }
+
+        private async void RestartAsync() {
+            IsRestarting = true;
+            try {
+                _reconnectCts?.Cancel();
+                _phd2Client.Disconnect();
+                _httpServer.Stop();
+                await Task.Delay(500);
+                StartApiServer();
+                _ = ConnectToPhd2WithRetryAsync();
+            } finally {
+                IsRestarting = false;
             }
         }
 

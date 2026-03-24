@@ -61,7 +61,7 @@ namespace AndreasBehrend.NINA.Phd2Api.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1888")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2888")]
         public int ApiPort {
             get {
                 return ((int)(this["ApiPort"]));
