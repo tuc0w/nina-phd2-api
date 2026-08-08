@@ -17,10 +17,7 @@ A N.I.N.A. plugin that exposes PHD2 as a REST API and real-time WebSocket server
 | `Phd2Port` | `4400` | PHD2 TCP server port |
 | `ApiPort` | `2888` | Port on which this plugin's REST API and WebSocket server listen |
 
-> **Network access:** By default the server binds to `localhost` only. To allow access from other machines run:
-> ```
-> netsh http add urlacl url=http://+:{ApiPort}/ user=%USERNAME%
-> ```
+> **Network access:** The server binds to all network interfaces by default (powered by [EmbedIO](https://github.com/unosquare/embedio)), so it can be reached from other machines on the network out of the box — no `netsh` configuration or administrator rights required. Make sure the Windows Firewall allows inbound connections on `{ApiPort}` if needed.
 
 ---
 

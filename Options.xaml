@@ -3,7 +3,21 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <DataTemplate x:Key="PHD2 API_Options">
-        <StackPanel Orientation="Vertical" Margin="5">
+        <StackPanel x:Name="RootPanel" Orientation="Vertical" Margin="5">
+
+            <GroupBox Header="API Server" Margin="0,0,0,8">
+                <Grid Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="API Enabled" Margin="0,4" />
+                    <CheckBox Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding ApiEnabled}" Margin="4,4" />
+                </Grid>
+            </GroupBox>
 
             <GroupBox Header="PHD2 Connection" Margin="0,0,0,8">
                 <Grid Margin="5">
@@ -25,28 +39,55 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Header="API Server" Margin="0,0,0,8">
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="180" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="API Port" Margin="0,4" />
-                    <TextBox Grid.Row="0" Grid.Column="1" MinWidth="80" Text="{Binding ApiPort}" Margin="4,4" />
-                    <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="REST Base URL" Margin="0,4" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Margin="4,4">
-                        <Run Text="http://localhost:" /><Run Text="{Binding ApiPort, Mode=OneWay}" /><Run Text="/api/v1/phd2/" />
-                    </TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="WebSocket URL" Margin="0,4" />
-                    <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="4,4">
-                        <Run Text="ws://localhost:" /><Run Text="{Binding ApiPort, Mode=OneWay}" /><Run Text="/api/v1/events/" />
-                    </TextBlock>
-                </Grid>
+            <GroupBox Header="API Network Addresses" Margin="0,0,0,8">
+                <StackPanel Margin="5">
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="API Port" Margin="0,4" />
+                        <TextBox Grid.Column="1" MinWidth="80" HorizontalAlignment="Left" Text="{Binding ApiPort}" Margin="4,4" />
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding ApiEndpoints}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="0,0,0,1" BorderBrush="#33FFFFFF" Padding="0,4" Margin="0,0,0,4">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="180" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="REST Base URL" Margin="0,2" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Margin="4,2">
+                                            <Hyperlink Command="{Binding DataContext.OpenUrlCommand, ElementName=RootPanel}"
+                                                       CommandParameter="{Binding RestUrl}">
+                                                <TextBlock Text="{Binding RestUrl}" />
+                                            </Hyperlink>
+                                        </TextBlock>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="WebSocket URL" Margin="0,2" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" Text="{Binding WebSocketUrl}" Margin="4,2" />
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Swagger UI" Margin="0,2" />
+                                        <TextBlock Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Margin="4,2">
+                                            <Hyperlink Command="{Binding DataContext.OpenUrlCommand, ElementName=RootPanel}"
+                                                       CommandParameter="{Binding SwaggerUrl}">
+                                                <TextBlock Text="{Binding SwaggerUrl}" />
+                                            </Hyperlink>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </GroupBox>
 
             <GroupBox Header="Current State">

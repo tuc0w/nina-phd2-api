@@ -5,13 +5,13 @@ namespace AndreasBehrend.NINA.Phd2Api.WebApi {
 
     internal static class OpenApiSpec {
 
-        public static string Generate(int port) {
+        public static string Generate(string host) {
             var spec = new JsonObject {
                 ["openapi"] = "3.0.3",
                 ["info"] = new JsonObject {
                     ["title"] = "PHD2 API",
                     ["description"] = "REST API for the PHD2 autoguider via N.I.N.A. plugin.\n\n" +
-                        "Real-time events are pushed over WebSocket at `ws://localhost:" + port + "/api/v1/events/`.\n\n" +
+                        "Real-time events are pushed over WebSocket at `ws://" + host + "/api/v1/events/`.\n\n" +
                         "**AppState values:** `Stopped` `Selected` `Calibrating` `Guiding` `LostLock` `Paused` `Looping`",
                     ["version"] = "1.0.0",
                     ["contact"] = new JsonObject {
@@ -20,8 +20,8 @@ namespace AndreasBehrend.NINA.Phd2Api.WebApi {
                 },
                 ["servers"] = new JsonArray {
                     new JsonObject {
-                        ["url"] = "http://localhost:" + port + "/api/v1",
-                        ["description"] = "PHD2 API (local)"
+                        ["url"] = "http://" + host + "/api/v1",
+                        ["description"] = "PHD2 API"
                     }
                 },
                 ["tags"] = new JsonArray {

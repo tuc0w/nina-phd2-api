@@ -2,7 +2,7 @@ namespace AndreasBehrend.NINA.Phd2Api.WebApi {
 
     internal static class SwaggerUi {
 
-        public static string GetHtml(int port) => $@"<!DOCTYPE html>
+        public static string GetHtml() => $@"<!DOCTYPE html>
 <html lang=""en"">
 <head>
   <meta charset=""UTF-8"">

@@ -6,8 +6,10 @@ using NINA.Plugin;
 using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
@@ -33,6 +35,7 @@ namespace AndreasBehrend.NINA.Phd2Api {
         private bool _isRestarting;
 
         public ICommand RestartCommand { get; }
+        public ICommand OpenUrlCommand { get; }
 
         [ImportingConstructor]
         public Phd2Api(IProfileService profileService) {
@@ -46,7 +49,7 @@ namespace AndreasBehrend.NINA.Phd2Api {
             profileService.ProfileChanged += ProfileService_ProfileChanged;
 
             _phd2Client = new Phd2Client();
-            _wsHandler = new WebSocketHandler();
+            _wsHandler = new WebSocketHandler("/api/v1/events/");
             _httpServer = new HttpServer(_phd2Client, _wsHandler);
 
             _phd2Client.EventReceived += OnPhd2EventReceived;
@@ -54,14 +57,18 @@ namespace AndreasBehrend.NINA.Phd2Api {
             _phd2Client.Phd2Disconnected += OnPhd2Disconnected;
 
             RestartCommand = new RelayCommand(_ => RestartAsync(), _ => !IsRestarting);
+            OpenUrlCommand = new RelayCommand(url => OpenUrl(url as string));
 
-            StartApiServer();
-            _ = ConnectToPhd2WithRetryAsync();
+            if (Settings.Default.ApiEnabled) {
+                StartApiServer();
+                _ = ConnectToPhd2WithRetryAsync();
+            }
         }
 
         private void StartApiServer() {
             try {
                 _httpServer.Start(Settings.Default.ApiPort);
+                RaisePropertyChanged(nameof(ApiEndpoints));
             } catch (Exception ex) {
                 Logger.Error($"PHD2 API: Failed to start HTTP server on port {Settings.Default.ApiPort}: {ex.Message}");
             }
@@ -131,6 +138,15 @@ namespace AndreasBehrend.NINA.Phd2Api {
             }
         }
 
+        private static void OpenUrl(string url) {
+            if (string.IsNullOrWhiteSpace(url)) return;
+            try {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            } catch (Exception ex) {
+                Logger.Error($"PHD2 API: Failed to open URL '{url}': {ex.Message}");
+            }
+        }
+
         private async void RestartAsync() {
             IsRestarting = true;
             try {
@@ -138,8 +154,10 @@ namespace AndreasBehrend.NINA.Phd2Api {
                 _phd2Client.Disconnect();
                 _httpServer.Stop();
                 await Task.Delay(500);
-                StartApiServer();
-                _ = ConnectToPhd2WithRetryAsync();
+                if (Settings.Default.ApiEnabled) {
+                    StartApiServer();
+                    _ = ConnectToPhd2WithRetryAsync();
+                }
             } finally {
                 IsRestarting = false;
             }
@@ -165,6 +183,15 @@ namespace AndreasBehrend.NINA.Phd2Api {
 
         public string CurrentAppState => _phd2Client.AppState;
 
+        public bool ApiEnabled {
+            get => Settings.Default.ApiEnabled;
+            set {
+                Settings.Default.ApiEnabled = value;
+                CoreUtil.SaveSettings(Settings.Default);
+                RaisePropertyChanged();
+            }
+        }
+
         public string Phd2Host {
             get => Settings.Default.Phd2Host;
             set {
@@ -189,6 +216,16 @@ namespace AndreasBehrend.NINA.Phd2Api {
                 Settings.Default.ApiPort = value;
                 CoreUtil.SaveSettings(Settings.Default);
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(ApiEndpoints));
+            }
+        }
+
+        public IEnumerable<Phd2ApiEndpoint> ApiEndpoints {
+            get {
+                var port = Settings.Default.ApiPort;
+                foreach (var address in _httpServer.GetBoundAddresses()) {
+                    yield return new Phd2ApiEndpoint(address, port);
+                }
             }
         }
 
@@ -196,6 +233,22 @@ namespace AndreasBehrend.NINA.Phd2Api {
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null) {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    /// <summary>
+    /// Represents a reachable base address of the API server (REST, WebSocket and Swagger UI),
+    /// used to display clickable links in the plugin options.
+    /// </summary>
+    public class Phd2ApiEndpoint {
+        public Phd2ApiEndpoint(string host, int port) {
+            RestUrl = $"http://{host}:{port}/api/v1/phd2/";
+            WebSocketUrl = $"ws://{host}:{port}/api/v1/events/";
+            SwaggerUrl = $"http://{host}:{port}/api/v1/swagger";
+        }
+
+        public string RestUrl { get; }
+        public string WebSocketUrl { get; }
+        public string SwaggerUrl { get; }
     }
 }
 

@@ -34,6 +34,18 @@ namespace AndreasBehrend.NINA.Phd2Api.Properties {
                 this["UpdateSettings"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ApiEnabled {
+            get {
+                return ((bool)(this["ApiEnabled"]));
+            }
+            set {
+                this["ApiEnabled"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
